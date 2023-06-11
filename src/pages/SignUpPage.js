@@ -68,7 +68,7 @@ export const SignUpPage = withRouter(() => {
     const onSubmit = async (email, password, username) => {
         const authUser = await createUserWithEmailAndPassword(email, password);
         await createUser(authUser.user.uid, username, email);
-        history.push(ROUTES.BOARDS);
+        history.push(ROUTES.CONFERENCES);
     };
 
     return (

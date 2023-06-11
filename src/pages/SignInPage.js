@@ -7,6 +7,8 @@ import { actionTypes } from '../auth/reducer';
 import { useStateValue } from '../application/state-provider';
 import { authService } from '../application/services';
 import { ROUTES } from '../application/constants';
+import { authorService } from '../application/services/author';
+import { convertUser } from '../utils/convertFromRaw';
 
 const SignInForm = () => {
     const [email, setEmail] = useState('');
@@ -22,11 +24,12 @@ const SignInForm = () => {
             setLoading(true);
             const result = await auth.signInWithPopup(provider);
             console.log('result', result);
+            await authorService.addAuthor(convertUser(result.user));
             dispatch({
                 type: actionTypes.SET_USER,
                 user: result.user,
             });
-            history.push(ROUTES.BOARDS);
+            history.push(ROUTES.CONFERENCES);
             setLoading(false);
         } catch (error) {
             setError(error.message);

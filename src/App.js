@@ -20,11 +20,11 @@ export const Content = withAuthentication(() => (
 
             <div className="h-full">
                 <Switch>
-                    <Redirect exact from="/" to="/boards" />
+                    <Redirect exact from="/" to="/conferences" />
                     <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
                     <Route exact path={ROUTES.SIGN_IN} component={SignInPage} />
-                    <Route exact path={ROUTES.BOARDS} component={BoardsPage} />
-                    <Route exact path={ROUTES.BOARD} component={BoardPage} />
+                    <Route exact path={ROUTES.CONFERENCES} component={BoardsPage} />
+                    <Route exact path={ROUTES.CONFERENCE} component={BoardPage} />
                     <Route component={NotFoundPage} />
                 </Switch>
             </div>

@@ -2,104 +2,30 @@ import { useState } from 'react';
 import { StarFilled, StarOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { BoardModal } from './BoardModal';
-import { ConferenceFormType } from '../Constants';
-import { boardService } from '../application/services/board';
+import moment from 'moment';
 
-export const BoardTitle = ({
-    title,
-    handleBoardClick,
-    addition,
-    handleBoardStarToggling,
-    handleDeleteBoard,
-    starred,
-    board,
-}) => {
-    const [modalVisible, setModalVisible] = useState(false);
-
-    const updateConference = async (key, data) => {
-        await boardService.updateBoard(key, data);
-    };
-    return (
-        <div
-            role="button"
-            tabIndex="0"
-            onKeyDown={() => {}}
-            onClick={() => handleBoardClick()}
-            className={`h-32 rounded-md p-2 font-semibold flex flex-col ${
-                addition ? 'bg-gray-200 text-gray-900' : 'bg-blue-500 text-white justify-between'
-            }`}
-        >
-            <div className={addition ? 'm-auto' : ''}>{title}</div>
-            <div
-                role="button"
-                tabIndex={-1}
-                onKeyDown={() => {}}
-                onClick={(e) => {
-                    e.stopPropagation();
-                }}
-            >
-                <BoardModal
-                    closeModal={(e) => {
-                        e.stopPropagation();
-                        setModalVisible(false);
-                    }}
-                    visible={modalVisible}
-                    type={ConferenceFormType.UPDATE}
-                    board={board}
-                    updateBoard={(key, data) => {
-                        updateConference(key, data);
-                        setModalVisible(false);
-                    }}
-                ></BoardModal>
+export const BoardTitle = ({ handleBoardClick, board }) => (
+    <div
+        role="button"
+        onKeyDown={() => {}}
+        tabIndex={-1}
+        className={`h-32 rounded-md p-2 font-semibold flex flex-col bg-blue-500 text-white justify-between`}
+        onClick={handleBoardClick}
+    >
+        <div className={'m-auto text-xl'}>{board.title}</div>
+        <div className="flex justify-between items-center">
+            <div>{moment(board.timeOccur || new Date()).format('DD-MM-yyyy, hh:mm')}</div>
+            <div className="flex items-center gap-3">
+                <div>{board.organizer.displayName}</div>
+                <img
+                    src={board.organizer.photoURL}
+                    alt="organizer-avatar"
+                    className="w-10 rounded-full"
+                />
             </div>
-            {!addition && (
-                <div className="flex justify-between items-center">
-                    <Button
-                        className="rounded-md"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setModalVisible(true);
-                        }}
-                    >
-                        Update conference
-                    </Button>
-                    <div className="flex gap-2">
-                        <div
-                            role="button"
-                            tabIndex="-1"
-                            className="flex"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleBoardStarToggling();
-                            }}
-                            onKeyDown={() => {}}
-                        >
-                            {starred ? (
-                                <StarFilled className="transform transition-all text-white text-opacity-75 hover:text-opacity-100 hover:translate-x-px scale-100 hover:scale-110 mt-auto" />
-                            ) : (
-                                <StarOutlined className="transform transition-all text-white text-opacity-75 hover:text-opacity-100 hover:translate-x-px scale-100 hover:scale-110 mt-auto" />
-                            )}
-                        </div>
-                        <div
-                            role="button"
-                            tabIndex="-1"
-                            className="flex"
-                            onKeyDown={() => {}}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteBoard();
-                            }}
-                        >
-                            <DeleteOutlined className="transform transition-all text-white text-opacity-75 hover:text-opacity-100 hover:translate-x-px scale-100 hover:scale-110 mt-auto" />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
-    );
-};
-
+    </div>
+);
 BoardTitle.propTypes = {
     title: PropTypes.string.isRequired,
     addition: PropTypes.bool,
