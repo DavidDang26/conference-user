@@ -5,6 +5,7 @@ import { Input, Button } from "antd";
 import { boardService } from "../application/services/board";
 import moment from "moment";
 import { convertUser } from "../utils/convertFromRaw";
+import { ConferencePaymentAxios } from "../application/services/axios";
 
 const PaperSubmissionForm = ({ board, user, conferenceId }) => {
     const { TextArea } = Input;
@@ -13,6 +14,8 @@ const PaperSubmissionForm = ({ board, user, conferenceId }) => {
     const [paperTitle, setPaperTitle] = useState("");
 
     const handleSubmit = async () => {
+        const id = uuid();
+        const axios = ConferencePaymentAxios();
         await boardService.updateBoard(conferenceId(), {
             lanes: board.lanes.map((val, index) => {
                 if (index !== 0) return val;
@@ -23,16 +26,26 @@ const PaperSubmissionForm = ({ board, user, conferenceId }) => {
                             {
                                 title: paperTitle,
                                 laneId: board.lanes[index].id,
-                                id: uuid(),
+                                id,
                                 description: paperNote,
                                 paperLink: paperLink,
                                 author: convertUser(user),
+                                paymentStatus: "Pending",
                             },
                         ]),
                     };
                 }
             }),
         });
+        const response = await axios.post("/api/payment/create", {
+            title: paperTitle,
+            id,
+            description: paperNote,
+            paperLink: paperLink,
+            conferenceId: conferenceId(),
+        });
+        console.log("🚀 ~ handleSubmit ~ response:", response);
+        window.location.replace(response.data.order_url);
     };
 
     return (
